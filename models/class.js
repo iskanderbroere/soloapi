@@ -1,7 +1,7 @@
 const mongoose = require('../config/database')
 const { Schema } = mongoose
 
-const recipeSchema = new Schema({
+const classSchema = new Schema({
   batchNumber: { type: Number, required: true },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
@@ -12,4 +12,4 @@ const recipeSchema = new Schema({
   updatedAt: { type: Date, default: Date.now }
 })
 
-module.exports = mongoose.model('recipes', recipeSchema)
+module.exports = mongoose.model('classes', classSchema)

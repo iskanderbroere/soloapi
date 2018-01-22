@@ -1,7 +1,7 @@
 [
-  {"batch_number":1,"start_date":"10/19/2017","end_date":"7/28/2018"},
-  {"batch_number":2,"start_date":"8/28/2017","end_date":"7/29/2018"},
-  {"batch_number":3,"start_date":"3/28/2017","end_date":"10/3/2018"},
-  {"batch_number":4,"start_date":"8/23/2017","end_date":"7/4/2018"},
-  {"batch_number":5,"start_date":"12/22/2017","end_date":"11/10/2018"}
+  {"batchNumber":1,"startDate":"10/19/2017","endDate":"7/28/2018"},
+  {"batchNumber":2,"startDate":"8/28/2017","endDate":"7/29/2018"},
+  {"batchNumber":3,"startDate":"3/28/2017","endDate":"10/3/2018"},
+  {"batchNumber":4,"startDate":"8/23/2017","endDate":"7/4/2018"},
+  {"batchNumber":5,"startDate":"12/22/2017","endDate":"11/10/2018"}
 ]

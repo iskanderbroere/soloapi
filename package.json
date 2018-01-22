@@ -1,5 +1,5 @@
 {
-  "name": "recipes-api",
+  "name": "batches-api",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
