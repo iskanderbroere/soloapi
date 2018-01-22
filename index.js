@@ -3,7 +3,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const passport = require('passport')
 const cors = require('cors')
-const { classes, students, users, sessions } = require('./routes')
+const { classes, students, users, sessions, evaluations } = require('./routes')
 
 const port = process.env.PORT || 3030
 
@@ -20,6 +20,7 @@ app
   // Our routes
   .use(classes)
   .use(students)
+  .use(evaluations)
   .use(users)
   .use(sessions)
 

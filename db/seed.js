@@ -35,7 +35,6 @@ const authenticate = (email, password) => {
     })
 }
 
-
 request
   .post(createUrl('/users'))
   .send(user)

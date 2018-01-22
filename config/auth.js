@@ -1,6 +1,6 @@
 // config/auth.js
 const passport = require('passport')
-const mongoose = require('mongoose')
+// const mongoose = require('mongoose')
 const passportJWT = require('passport-jwt')
 const { User } = require('../models')
 const jwtOptions = require('./jwt')
@@ -8,7 +8,8 @@ const jwtOptions = require('./jwt')
 const JwtStrategy = passportJWT.Strategy
 
 const tokenStrategy = new JwtStrategy(jwtOptions, (jwtPayload, done) => {
-  const user = User.findById(jwtPayload.id)
+  // const user = User.findById(jwtPayload.id)
+  User.findById(jwtPayload.id)
     .then((user) => {
       if (user) {
         done(null, user)
