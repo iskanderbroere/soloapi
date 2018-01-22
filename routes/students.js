@@ -10,7 +10,7 @@ router.get('/students', (req, res, next) => {
     .then((students) => res.json(students))
     // Throw a 500 error if something goes wrong
     .catch((error) => next(error))
-  })
+})
   .get('/students/:id', (req, res, next) => {
     const id = req.params.id
     Student.findById(id)
@@ -60,16 +60,15 @@ router.get('/students', (req, res, next) => {
       })
       .catch((error) => next(error))
   })
-  // i don't need this
-  // .delete('/students/:id', (req, res, next) => {
-  //   const studentId = req.params.id
+  .delete('/students/:id', (req, res, next) => {
+    const studentId = req.params.id
 
-  //   Student.findOneAndRemove(studentId)
-  //     .then((student) => {
-  //       if (!student) return next()
-  //       res.json(student)
-  //     })
-  //     .catch((error) => next(error))
-  // })
+    Student.findOneAndRemove(studentId)
+      .then((student) => {
+        if (!student) return next()
+        res.json(student)
+      })
+      .catch((error) => next(error))
+  })
 
 module.exports = router

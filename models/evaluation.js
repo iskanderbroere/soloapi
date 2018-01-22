@@ -2,9 +2,9 @@ const mongoose = require('../config/database')
 const { Schema } = mongoose
 
 const recipeSchema = new Schema({
-  fullName: { type: String, required: true },
-  picUrl: { type: String, required: true },
-  evaluationIds: [{ type: Schema.Types.ObjectId, ref: 'evaluations' }],
+  color: { type: Number, required: true, default: 1 },
+  date: { type: Date, required: true, default: Date.now },
+  remark: { type: String },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 })

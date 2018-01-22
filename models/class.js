@@ -5,6 +5,7 @@ const recipeSchema = new Schema({
   batchNumber: { type: Number, required: true },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
+  // maybe the ref should be singular
   studentIds: [{ type: Schema.Types.ObjectId, ref: 'students' }],
   teacherId: { type: Schema.Types.ObjectId, ref: 'users' },
   createdAt: { type: Date, default: Date.now },
