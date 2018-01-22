@@ -3,17 +3,17 @@ const { Class } = require('../models')
 const passport = require('../config/auth')
 
 router.get('/classes', (req, res, next) => {
-  Student.find()
+  Class.find()
     // Newest classes first
-    .sort({ createdAt: -1 })
+    .sort({ batchNumber: -1 })
     // Send the data in JSON format
     .then((classes) => res.json(classes))
     // Throw a 500 error if something goes wrong
     .catch((error) => next(error))
-  })
+})
   .get('/classes/:id', (req, res, next) => {
     const id = req.params.id
-    Student.findById(id)
+    Class.findById(id)
       .then((classy) => {
         if (!classy) { return next() }
         res.json(classy)
@@ -31,7 +31,7 @@ router.get('/classes', (req, res, next) => {
     let newStudent = req.body
     // newStudent.authorId = req.account._id
 
-    Student.create(newStudent)
+    Class.create(newStudent)
       .then((classy) => {
         res.status = 201
         res.json(classy)
@@ -42,7 +42,7 @@ router.get('/classes', (req, res, next) => {
     const classyId = req.params.id
     let update = req.body
 
-    Student.findOneAndUpdate(classyId, update)
+    Class.findOneAndUpdate(classyId, update)
       .then((classy) => {
         if (!classy) return next()
         res.json(classy)
@@ -53,7 +53,7 @@ router.get('/classes', (req, res, next) => {
     const classyId = req.params.id
     let update = req.body
 
-    Student.findOneAndUpdate(classyId, update)
+    Class.findOneAndUpdate(classyId, update)
       .then((classy) => {
         if (!classy) return next()
         res.json(classy)
@@ -64,7 +64,7 @@ router.get('/classes', (req, res, next) => {
   // .delete('/classes/:id', (req, res, next) => {
   //   const classyId = req.params.id
 
-  //   Student.findOneAndRemove(classyId)
+  //   Class.findOneAndRemove(classyId)
   //     .then((classy) => {
   //       if (!classy) return next()
   //       res.json(classy)
