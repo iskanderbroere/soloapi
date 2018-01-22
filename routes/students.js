@@ -2,15 +2,39 @@ const router = require('express').Router()
 const { Student } = require('../models')
 const passport = require('../config/auth')
 
-router.get('/students', (req, res, next) => {
-  Student.find()
+const randomNumber = (min, max) => {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+
+const getRandomGroup = () => {
+  const gamble = randomNumber(1, 100)
+  if (gamble < 48) { return 3 } else if (gamble > 78) { return 1 } return 2
+}
+
+router
+  .get('/students', (req, res, next) => {
+    Student.find()
     // Newest students first
-    .sort({ createdAt: -1 })
+      .sort({ createdAt: -1 })
     // Send the data in JSON format
-    .then((students) => res.json(students))
+      .then((students) => res.json(students))
     // Throw a 500 error if something goes wrong
-    .catch((error) => next(error))
-})
+      .catch((error) => next(error))
+  })
+  .get('/students/random', (req, res, next) => {
+    // Student.find()
+    Student.where('lastEvaluation').equals(getRandomGroup())
+      .then((students) => {
+        // if there are no evaluated students this probably errors
+        const randomStudentIndex = randomNumber(0, students.length)
+        const randomStudent = students[randomStudentIndex]
+        console.log(randomStudent)
+        res.json(randomStudent)
+      })
+      .catch((error) => next(error))
+  })
   .get('/students/:id', (req, res, next) => {
     const id = req.params.id
     Student.findById(id)
