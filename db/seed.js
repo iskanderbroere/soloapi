@@ -8,11 +8,11 @@ const createUrl = (path) => {
 }
 
 const createClasses = (token) => {
-  return classes.map((class) => {
+  return classes.map((classy) => {
     return request
       .post(createUrl('/classes'))
       .set('Authorization', `Bearer ${token}`)
-      .send(class)
+      .send(classy)
       .then((res) => {
         console.log('Class seeded...', res.body)
       })
