@@ -24,40 +24,48 @@ const filterStudents = (students) => {
 router
   .get('/classes/:batchNumber/students', (req, res, next) => {
     const batchNumber = req.params.batchNumber
-    Class.findOne({ batchNumber: batchNumber })
-      .then((classObject) => {
-        console.log(classObject)
-        const studentsInClass = classObject.studentIds.map((student) => {
-          return student
-        })
-        // does this return a student object or some sort of reference?
-        res.json(studentsInClass)
-      })
-    // Newest students first
-    // .sort({ createdAt: -1 })
-    // Send the data in JSON format
-    // .then((students) => res.json(students))
-    // Throw a 500 error if something goes wrong
-      .catch((error) => next(error))
+    Class.findOne({ batchNumber: batchNumber }).populate('studentIds')
+      .then(ans => res.json(ans))
+      .catch(err => console.log(err))
+    // Class.findOne({ batchNumber: batchNumber })
+    //   .then((classObject) => {
+    //     console.log(classObject)
+    //     const studentsInClass = classObject.studentIds.map((student) => {
+    //       return student
+    //     })
+    //     // does this return a student object or some sort of reference?
+    //     res.json(studentsInClass)
+    //   })
+    // // Newest students first
+    // // .sort({ createdAt: -1 })
+    // // Send the data in JSON format
+    // // .then((students) => res.json(students))
+    // // Throw a 500 error if something goes wrong
+    //   .catch((error) => next(error))
   })
   .get('/classes/:batchNumber/students/random', (req, res, next) => {
     // Student.find()
     const batchNumber = req.params.batchNumber
     Class.findOne({ batchNumber: batchNumber })
-      .then((students) => {
-        if (students.length < 1) return console.error('No students in this class!')
-        // this still errors when students.length === 0
-        // const filteredStudents = mockstudents.filter(student => student.lastEvaluation === getRandomGroup())
-        let filteredStudents = filterStudents(students)
-        // try to deal with empty groups
-        // while (filteredStudents.length < 1) {
-        //   this.filteredStudents = filterStudents(students)
-        //   return filteredStudents
-        // }
-        const randomStudentIndex = randomNumber(0, filteredStudents.length)
-        const randomStudent = filteredStudents[randomStudentIndex]
-        console.log('This is the random student: ', randomStudent)
-        res.json(randomStudent)
+      .then((classObject) => {
+        Student.find({ '_id': { $in: classObject.studentIds } })
+          .then(students => {
+            if (students.length < 1) return console.error('No students in this class!')
+            // this still errors when students.length === 0
+            // const filteredStudents = mockstudents.filter(student => student.lastEvaluation === getRandomGroup())
+            let filteredStudents = filterStudents(students)
+            let noEmptyGroup = filteredStudents.length > 0 ? filteredStudents : students
+            // try to deal with empty groups
+            // while (filteredStudents.length < 1) {
+            //   this.filteredStudents = filterStudents(students)
+            //   return filteredStudents
+            // }
+            const randomStudentIndex = randomNumber(0, noEmptyGroup.length)
+            const randomStudent = noEmptyGroup[randomStudentIndex]
+            console.log('This is the random student: ', randomStudent)
+            res.json(randomStudent)
+          })
+          .catch(err => console.error('dsdsjfkldskdfs', err))
       })
       .catch((error) => next(error))
     // Student.where('lastEvaluation').equals(getRandomGroup())

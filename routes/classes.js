@@ -10,61 +10,62 @@ router.get('/classes', (req, res, next) => {
 })
   .get('/classes/:batchNumber', (req, res, next) => {
     const batchNumber = req.params.batchNumber
-    Class.findOne({ batchNumber: batchNumber })
-      .then((classy) => {
-        if (!classy) { return next() }
-        res.json(classy)
+    Class.findOne({ batchNumber: batchNumber }).populate('studentIds')
+      .then((classObject) => {
+        if (!classObject) { return next() }
+        res.json(classObject)
       })
       .catch((error) => next(error))
   })
-  .post('/classes', passport.authorize('jwt', { session: false }), (req, res, next) => {
+  // need AUTH for this route!!
+  .post('/classes', (req, res, next) => {
     // Once authorized, the user data should be in `req.account`!
-    if (!req.account) {
-      const error = new Error('Unauthorized')
-      error.status = 401
-      return next(error)
-    }
+    // if (!req.account) {
+    //   const error = new Error('Unauthorized')
+    //   error.status = 401
+    //   return next(error)
+    // }
 
     let newStudent = req.body
     // newStudent.authorId = req.account._id
 
     Class.create(newStudent)
-      .then((classy) => {
+      .then((classObject) => {
         res.status = 201
-        res.json(classy)
+        res.json(classObject)
       })
       .catch((error) => next(error))
   })
   .put('/classes/:id', (req, res, next) => {
-    const classyId = req.params.id
+    const classObjectId = req.params.id
     let update = req.body
 
-    Class.findOneAndUpdate(classyId, update)
-      .then((classy) => {
-        if (!classy) return next()
-        res.json(classy)
+    Class.findOneAndUpdate(classObjectId, update)
+      .then((classObject) => {
+        if (!classObject) return next()
+        res.json(classObject)
       })
       .catch((error) => next(error))
   })
   .patch('/classes/:id', (req, res, next) => {
-    const classyId = req.params.id
+    const classObjectId = req.params.id
     let update = req.body
 
-    Class.findOneAndUpdate(classyId, update)
-      .then((classy) => {
-        if (!classy) return next()
-        res.json(classy)
+    Class.findOneAndUpdate(classObjectId, update)
+      .then((classObject) => {
+        if (!classObject) return next()
+        res.json(classObject)
       })
       .catch((error) => next(error))
   })
   // i don't need this
   // .delete('/classes/:id', (req, res, next) => {
-  //   const classyId = req.params.id
+  //   const classObjectId = req.params.id
 
-  //   Class.findOneAndRemove(classyId)
-  //     .then((classy) => {
-  //       if (!classy) return next()
-  //       res.json(classy)
+  //   Class.findOneAndRemove(classObjectId)
+  //     .then((classObject) => {
+  //       if (!classObject) return next()
+  //       res.json(classObject)
   //     })
   //     .catch((error) => next(error))
   // })
