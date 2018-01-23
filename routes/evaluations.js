@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const { Evaluation } = require('../models')
+const { Student } = require('../models')
 const passport = require('../config/auth')
 
 router.get('/evaluations', (req, res, next) => {
@@ -20,19 +21,30 @@ router.get('/evaluations', (req, res, next) => {
       })
       .catch((error) => next(error))
   })
-  .post('/evaluations', passport.authorize('jwt', { session: false }), (req, res, next) => {
+  .post('/students/:id/evaluations', passport.authorize('jwt', { session: false }), (req, res, next) => {
+    // maybe nest evaluations in students
     // Once authorized, the user data should be in `req.account`!
     if (!req.account) {
       const error = new Error('Unauthorized')
       error.status = 401
       return next(error)
     }
-
-    let newStudent = req.body
-    // newStudent.authorId = req.account._id
-
-    Evaluation.create(newStudent)
+    const studentId = req.params.id
+    console.log('student id', studentId)
+    let newEvaluation = req.body
+    // newEvaluation.authorId = req.account._id
+    // hmm
+    // update student here (evaluationIds and lastEvaluation)
+    Evaluation.create(newEvaluation)
       .then((evaluation) => {
+        Student.findByIdAndUpdate(
+          // can test with id from db
+          studentId,
+          {
+            $push: {evaluationIds: evaluation},
+            lastEvaluation: evaluation.color
+          }
+        ).then(res => console.log('callback for s update', res))
         res.status = 201
         res.json(evaluation)
       })

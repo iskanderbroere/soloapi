@@ -4,16 +4,13 @@ const passport = require('../config/auth')
 
 router.get('/classes', (req, res, next) => {
   Class.find()
-    // Newest classes first
     .sort({ batchNumber: -1 })
-    // Send the data in JSON format
     .then((classes) => res.json(classes))
-    // Throw a 500 error if something goes wrong
     .catch((error) => next(error))
 })
-  .get('/classes/:id', (req, res, next) => {
-    const id = req.params.id
-    Class.findById(id)
+  .get('/classes/:batchNumber', (req, res, next) => {
+    const batchNumber = req.params.batchNumber
+    Class.findOne({ batchNumber: batchNumber })
       .then((classy) => {
         if (!classy) { return next() }
         res.json(classy)

@@ -2,6 +2,7 @@
 const request = require('superagent')
 const user = require('./fixtures/teacher.json')
 const classes = require('./fixtures/classes.json')
+const students = require('./fixtures/students.json')
 
 const createUrl = (path) => {
   return `${process.env.HOST || `http://localhost:${process.env.PORT || 3030}`}${path}`
@@ -22,12 +23,28 @@ const createClasses = (token) => {
   })
 }
 
+const createStudents = (token) => {
+  return students.map((student) => {
+    return request
+      .post(createUrl('/students'))
+      .set('Authorization', `Bearer ${token}`)
+      .send(student)
+      .then((res) => {
+        console.log('Student seeded...', res.body)
+      })
+      .catch((err) => {
+        console.error('Error seeding student!', err)
+      })
+  })
+}
+
 const authenticate = (email, password) => {
   request
     .post(createUrl('/sessions'))
     .send({ email, password })
     .then((res) => {
       console.log('Authenticated!')
+      createStudents(res.body.token)
       return createClasses(res.body.token)
     })
     .catch((err) => {
