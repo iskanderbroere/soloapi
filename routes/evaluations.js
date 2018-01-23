@@ -3,15 +3,21 @@ const { Evaluation } = require('../models')
 const { Student } = require('../models')
 const passport = require('../config/auth')
 
-router.get('/evaluations', (req, res, next) => {
-  Evaluation.find()
+router
+  .get('/students/:id/evaluations', (req, res, next) => {
+    const studentId = req.params.id
+    Student.findById(studentId)
+      .then((student) => {
+        res.json(student.evaluationIds)
+      })
+      .catch((error) => next(error))
+    // Evaluation.find()
     // Newest evaluations first
-    .sort({ createdAt: -1 })
+    // .sort({ createdAt: -1 })
     // Send the data in JSON format
-    .then((evaluations) => res.json(evaluations))
+    // .then((evaluations) => res.json(evaluations))
     // Throw a 500 error if something goes wrong
-    .catch((error) => next(error))
-})
+  })
   .get('/evaluations/:id', (req, res, next) => {
     const id = req.params.id
     Evaluation.findById(id)
@@ -31,7 +37,7 @@ router.get('/evaluations', (req, res, next) => {
     }
     const studentId = req.params.id
     console.log('student id', studentId)
-    let newEvaluation = req.body
+    const newEvaluation = req.body
     // newEvaluation.authorId = req.account._id
     // hmm
     // update student here (evaluationIds and lastEvaluation)
@@ -51,10 +57,10 @@ router.get('/evaluations', (req, res, next) => {
       .catch((error) => next(error))
   })
   .put('/evaluations/:id', (req, res, next) => {
-    const classyId = req.params.id
-    let update = req.body
+    const evalId = req.params.id
+    const update = req.body
 
-    Evaluation.findOneAndUpdate(classyId, update)
+    Evaluation.findByIdAndUpdate(evalId, update)
       .then((evaluation) => {
         if (!evaluation) return next()
         res.json(evaluation)
@@ -62,10 +68,10 @@ router.get('/evaluations', (req, res, next) => {
       .catch((error) => next(error))
   })
   .patch('/evaluations/:id', (req, res, next) => {
-    const classyId = req.params.id
-    let update = req.body
+    const evalId = req.params.id
+    const update = req.body
 
-    Evaluation.findOneAndUpdate(classyId, update)
+    Evaluation.findByIdAndUpdate(evalId, update)
       .then((evaluation) => {
         if (!evaluation) return next()
         res.json(evaluation)
