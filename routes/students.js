@@ -2,7 +2,7 @@ const router = require('express').Router()
 const { Student } = require('../models')
 const { Class } = require('../models')
 const passport = require('../config/auth')
-const mockstudents = require('../db/fixtures/students.json')
+// const mockstudents = require('../db/fixtures/students.json')
 
 const randomNumber = (min, max) => {
   // maybe i don't need this
