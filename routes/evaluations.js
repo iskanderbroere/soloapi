@@ -21,7 +21,8 @@ router.get('/evaluations', (req, res, next) => {
       })
       .catch((error) => next(error))
   })
-  .post('/evaluations', passport.authorize('jwt', { session: false }), (req, res, next) => {
+  .post('/students/:id/evaluations', passport.authorize('jwt', { session: false }), (req, res, next) => {
+    // maybe nest evaluations in students
     // Once authorized, the user data should be in `req.account`!
     if (!req.account) {
       const error = new Error('Unauthorized')
@@ -32,7 +33,7 @@ router.get('/evaluations', (req, res, next) => {
     console.log('student id', studentId)
     let newEvaluation = req.body
     // newEvaluation.authorId = req.account._id
-
+    // hmm
     // update student here (evaluationIds and lastEvaluation)
     Evaluation.create(newEvaluation)
       .then((evaluation) => {

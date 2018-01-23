@@ -2,7 +2,7 @@ const mongoose = require('../config/database')
 const { Schema } = mongoose
 
 const classSchema = new Schema({
-  batchNumber: { type: Number, required: true },
+  batchNumber: { type: Number, unique: true, required: true },
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   // maybe the ref should be singular
