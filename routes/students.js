@@ -4,6 +4,8 @@ const { Class } = require('../models')
 const passport = require('../config/auth')
 // const mockstudents = require('../db/fixtures/students.json')
 
+const authenticate = passport.authorize('jwt', { session: false })
+
 const randomNumber = (min, max) => {
   // maybe i don't need this
   min = Math.ceil(min)
@@ -22,7 +24,7 @@ const filterStudents = (students) => {
 }
 
 router
-  .get('/classes/:batchNumber/students', (req, res, next) => {
+  .get('/classes/:batchNumber/students', authenticate, (req, res, next) => {
     const batchNumber = req.params.batchNumber
     Class.findOne({ batchNumber: batchNumber }).populate('studentIds')
       .then(ans => res.json(ans))
@@ -43,7 +45,7 @@ router
     // // Throw a 500 error if something goes wrong
     //   .catch((error) => next(error))
   })
-  .get('/classes/:batchNumber/students/random', (req, res, next) => {
+  .get('/classes/:batchNumber/students/random', authenticate, (req, res, next) => {
     // Student.find()
     const batchNumber = req.params.batchNumber
     Class.findOne({ batchNumber: batchNumber })
@@ -53,14 +55,15 @@ router
             if (students.length < 1) return console.error('No students in this class!')
             // this still errors when students.length === 0
             // const filteredStudents = mockstudents.filter(student => student.lastEvaluation === getRandomGroup())
-            let filteredStudents = filterStudents(students)
-            let noEmptyGroup = filteredStudents.length > 0 ? filteredStudents : students
+            const filteredStudents = filterStudents(students)
+            const noEmptyGroup = filteredStudents.length > 0 ? filteredStudents : students
+            console.log(noEmptyGroup)
             // try to deal with empty groups
             // while (filteredStudents.length < 1) {
             //   this.filteredStudents = filterStudents(students)
             //   return filteredStudents
             // }
-            const randomStudentIndex = randomNumber(0, noEmptyGroup.length)
+            const randomStudentIndex = randomNumber(0, (noEmptyGroup.length - 1))
             const randomStudent = noEmptyGroup[randomStudentIndex]
             console.log('This is the random student: ', randomStudent)
             res.json(randomStudent)
@@ -77,9 +80,9 @@ router
     //     res.json(randomStudent)
     //   })
   })
-  .get('/classes/:batchNumber/students/:id', (req, res, next) => {
+  .get('/classes/:batchNumber/students/:id', authenticate, (req, res, next) => {
     const id = req.params.id
-    Student.findById(id)
+    Student.findById(id).populate('evaluationIds')
       .then((student) => {
         if (!student) { return next() }
         res.json(student)
@@ -90,13 +93,14 @@ router
     // Send the data in JSON format
     // .then((students) => res.json(students))
   })
-  .post('/classes/:batchNumber/students', passport.authorize('jwt', { session: false }), (req, res, next) => {
+  .post('/classes/:batchNumber/students', authenticate, (req, res, next) => {
+    console.log(req.account)
     // Once authorized, the user data should be in `req.account`!
-    if (!req.account) {
-      const error = new Error('Unauthorized')
-      error.status = 401
-      return next(error)
-    }
+    // if (!req.account) {
+    //   const error = new Error('Unauthorized')
+    //   error.status = 401
+    //   return next(error)
+    // }
 
     const newStudent = req.body
     const batchNumber = req.params.batchNumber
@@ -111,33 +115,29 @@ router
       })
       .catch((error) => next(error))
   })
-  // fix this
-  .put('/classes/:batchNumber/students/:id', (req, res, next) => {
+  .put('/classes/:batchNumber/students/:id', authenticate, (req, res, next) => {
     const studentId = req.params.id
-    const update = req.body
-
-    Student.findByIdAndUpdate(studentId, update)
-      .then((student) => {
-        if (!student) return next()
-        console.log('what', student)
-        res.json(student)
-      })
-      .catch((error) => next(error))
-  })
-  // fix this
-  .patch('/classes/:batchNumber/students/:id', (req, res, next) => {
-    const studentId = req.params.id
-    const update = req.body
-
-    Student.findByIdAndUpdate(studentId, update)
-      .then((student) => {
+    const update = req.body.update
+    // callback responds with old object unless new is specified
+    Student.findByIdAndUpdate(studentId, { $set: update }, { new: true })
+      .then(student => {
         if (!student) return next()
         res.json(student)
       })
       .catch((error) => next(error))
   })
-  // fix this
-  .delete('/classes/:batchNumber/students/:id', (req, res, next) => {
+  .patch('/classes/:batchNumber/students/:id', authenticate, (req, res, next) => {
+    const studentId = req.params.id
+    const update = req.body.update
+    // callback responds with old object unless new is specified
+    Student.findByIdAndUpdate(studentId, { $set: update }, { new: true })
+      .then(student => {
+        if (!student) return next()
+        res.json(student)
+      })
+      .catch((error) => next(error))
+  })
+  .delete('/classes/:batchNumber/students/:id', authenticate, (req, res, next) => {
     const studentId = req.params.id
 
     Student.findByIdAndRemove(studentId)

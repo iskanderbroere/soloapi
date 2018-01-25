@@ -36,7 +36,6 @@ router
       return next(error)
     }
     const studentId = req.params.id
-    console.log('student id', studentId)
     const newEvaluation = req.body
     // newEvaluation.authorId = req.account._id
     // hmm
