@@ -24,27 +24,27 @@ const filterStudents = (students) => {
 }
 
 router
-  .get('/classes/:batchNumber/students', authenticate, (req, res, next) => {
-    const batchNumber = req.params.batchNumber
-    Class.findOne({ batchNumber: batchNumber }).populate('studentIds')
-      .then(ans => res.json(ans))
-      .catch(err => console.log(err))
-    // Class.findOne({ batchNumber: batchNumber })
-    //   .then((classObject) => {
-    //     console.log(classObject)
-    //     const studentsInClass = classObject.studentIds.map((student) => {
-    //       return student
-    //     })
-    //     // does this return a student object or some sort of reference?
-    //     res.json(studentsInClass)
-    //   })
-    // // Newest students first
-    // // .sort({ createdAt: -1 })
-    // // Send the data in JSON format
-    // // .then((students) => res.json(students))
-    // // Throw a 500 error if something goes wrong
-    //   .catch((error) => next(error))
-  })
+  // .get('/classes/:batchNumber/students', authenticate, (req, res, next) => {
+  //   const batchNumber = req.params.batchNumber
+  //   Class.findOne({ batchNumber: batchNumber }).populate({ path: 'studentIds', options: { sort: '-createdAt' } })
+  //     .then(ans => res.json(ans))
+  //     .catch(err => console.log(err))
+// Class.findOne({ batchNumber: batchNumber })
+//   .then((classObject) => {
+//     console.log(classObject)
+//     const studentsInClass = classObject.studentIds.map((student) => {
+//       return student
+//     })
+//     // does this return a student object or some sort of reference?
+//     res.json(studentsInClass)
+//   })
+// // Newest students first
+// // .sort({ createdAt: -1 })
+// // Send the data in JSON format
+// // .then((students) => res.json(students))
+// // Throw a 500 error if something goes wrong
+//   .catch((error) => next(error))
+  // })
   .get('/classes/:batchNumber/students/random', authenticate, (req, res, next) => {
     // Student.find()
     const batchNumber = req.params.batchNumber
@@ -82,7 +82,7 @@ router
   })
   .get('/classes/:batchNumber/students/:id', authenticate, (req, res, next) => {
     const id = req.params.id
-    Student.findById(id).populate('evaluationIds')
+    Student.findById(id).populate({ path: 'evaluationIds', options: { sort: '-date' } })
       .then((student) => {
         if (!student) { return next() }
         res.json(student)

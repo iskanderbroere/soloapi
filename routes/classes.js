@@ -12,7 +12,7 @@ router.get('/classes', authenticate, (req, res, next) => {
 })
   .get('/classes/:batchNumber', authenticate, (req, res, next) => {
     const batchNumber = req.params.batchNumber
-    Class.findOne({ batchNumber: batchNumber }).populate('studentIds')
+    Class.findOne({ batchNumber: batchNumber }).populate({ path: 'studentIds', options: { sort: '-createdAt' } })
       .then((classObject) => {
         if (!classObject) { return next() }
         res.json(classObject)

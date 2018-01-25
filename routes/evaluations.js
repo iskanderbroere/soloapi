@@ -7,6 +7,7 @@ router
   .get('/students/:id/evaluations', (req, res, next) => {
     const studentId = req.params.id
     Student.findById(studentId)
+      .sort({ date: 'asc' })
       .then((student) => {
         res.json(student.evaluationIds)
       })
@@ -36,7 +37,7 @@ router
       return next(error)
     }
     const studentId = req.params.id
-    const newEvaluation = req.body
+    const newEvaluation = { ...req.body, date: req.body.date.slice(0, 10) }
     // newEvaluation.authorId = req.account._id
     // hmm
     // update student here (evaluationIds and lastEvaluation)
