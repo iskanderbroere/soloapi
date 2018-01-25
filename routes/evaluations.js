@@ -12,12 +12,6 @@ router
         res.json(student.evaluationIds)
       })
       .catch((error) => next(error))
-    // Evaluation.find()
-    // Newest evaluations first
-    // .sort({ createdAt: -1 })
-    // Send the data in JSON format
-    // .then((evaluations) => res.json(evaluations))
-    // Throw a 500 error if something goes wrong
   })
   .get('/evaluations/:id', (req, res, next) => {
     const id = req.params.id
@@ -29,8 +23,6 @@ router
       .catch((error) => next(error))
   })
   .post('/students/:id/evaluations', passport.authorize('jwt', { session: false }), (req, res, next) => {
-    // maybe nest evaluations in students
-    // Once authorized, the user data should be in `req.account`!
     if (!req.account) {
       const error = new Error('Unauthorized')
       error.status = 401
@@ -38,19 +30,11 @@ router
     }
     const studentId = req.params.id
     const newEvaluation = { ...req.body, date: req.body.date.slice(0, 10) }
-    // newEvaluation.authorId = req.account._id
-    // hmm
-    // update student here (evaluationIds and lastEvaluation)
+
     Evaluation.create(newEvaluation)
       .then((evaluation) => {
-        Student.findByIdAndUpdate(
-          // can test with id from db
-          studentId,
-          {
-            $push: {evaluationIds: evaluation},
-            lastEvaluation: evaluation.color
-          }
-        ).then(res => console.log('callback for s update', res))
+        Student.findByIdAndUpdate(studentId, { $push: {evaluationIds: evaluation}, lastEvaluation: evaluation.color })
+          .then(res => res.json(res))
         res.status = 201
         res.json(evaluation)
       })
@@ -60,7 +44,7 @@ router
     const evalId = req.params.id
     const update = req.body
 
-    Evaluation.findByIdAndUpdate(evalId, update)
+    Evaluation.findByIdAndUpdate(evalId, update, { new: true })
       .then((evaluation) => {
         if (!evaluation) return next()
         res.json(evaluation)
@@ -78,16 +62,4 @@ router
       })
       .catch((error) => next(error))
   })
-  // i don't need this
-  // .delete('/evaluations/:id', (req, res, next) => {
-  //   const classyId = req.params.id
-
-  //   Evaluation.findOneAndRemove(classyId)
-  //     .then((evaluation) => {
-  //       if (!evaluation) return next()
-  //       res.json(evaluation)
-  //     })
-  //     .catch((error) => next(error))
-  // })
-
 module.exports = router

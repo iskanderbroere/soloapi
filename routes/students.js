@@ -24,27 +24,6 @@ const filterStudents = (students) => {
 }
 
 router
-  // .get('/classes/:batchNumber/students', authenticate, (req, res, next) => {
-  //   const batchNumber = req.params.batchNumber
-  //   Class.findOne({ batchNumber: batchNumber }).populate({ path: 'studentIds', options: { sort: '-createdAt' } })
-  //     .then(ans => res.json(ans))
-  //     .catch(err => console.log(err))
-// Class.findOne({ batchNumber: batchNumber })
-//   .then((classObject) => {
-//     console.log(classObject)
-//     const studentsInClass = classObject.studentIds.map((student) => {
-//       return student
-//     })
-//     // does this return a student object or some sort of reference?
-//     res.json(studentsInClass)
-//   })
-// // Newest students first
-// // .sort({ createdAt: -1 })
-// // Send the data in JSON format
-// // .then((students) => res.json(students))
-// // Throw a 500 error if something goes wrong
-//   .catch((error) => next(error))
-  // })
   .get('/classes/:batchNumber/students/random', authenticate, (req, res, next) => {
     // Student.find()
     const batchNumber = req.params.batchNumber
@@ -88,23 +67,15 @@ router
         res.json(student)
       })
       .catch((error) => next(error))
-    // Newest students first
-    // .sort({ createdAt: -1 })
-    // Send the data in JSON format
-    // .then((students) => res.json(students))
   })
   .post('/classes/:batchNumber/students', authenticate, (req, res, next) => {
-    console.log(req.account)
-    // Once authorized, the user data should be in `req.account`!
-    // if (!req.account) {
-    //   const error = new Error('Unauthorized')
-    //   error.status = 401
-    //   return next(error)
-    // }
-
+    if (!req.account) {
+      const error = new Error('Unauthorized')
+      error.status = 401
+      return next(error)
+    }
     const newStudent = req.body
     const batchNumber = req.params.batchNumber
-    // newStudent.authorId = req.account._id
 
     Student.create(newStudent)
       .then((student) => {

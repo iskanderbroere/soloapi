@@ -27,7 +27,6 @@ router.get('/classes', authenticate, (req, res, next) => {
     }
 
     let newStudent = req.body
-    // newStudent.authorId = req.account._id
 
     Class.create(newStudent)
       .then((classObject) => {

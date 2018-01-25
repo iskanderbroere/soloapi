@@ -17,7 +17,6 @@ router.post('/users', (req, res, next) => {
 })
 
 router.get('/users/me', passport.authorize('jwt', { session: false }), (req, res, next) => {
-  // Once authorized, the user data should be in `req.account`!
   if (!req.account) {
     const error = new Error('Unauthorized')
     error.status = 401
