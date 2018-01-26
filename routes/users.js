@@ -18,7 +18,7 @@ router.post('/users', (req, res, next) => {
 
 router.get('/users/me', passport.authorize('jwt', { session: false }), (req, res, next) => {
   if (!req.account) {
-    const error = new Error('Unauthorized')
+    let error = new Error('Unauthorized')
     error.status = 401
     next(error)
   }

@@ -21,7 +21,7 @@ router.get('/classes', authenticate, (req, res, next) => {
   })
   .post('/classes', authenticate, (req, res, next) => {
     if (!req.account) {
-      const error = new Error('Unauthorized')
+      let error = new Error('Unauthorized')
       error.status = 401
       return next(error)
     }

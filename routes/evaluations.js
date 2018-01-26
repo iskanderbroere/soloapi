@@ -23,18 +23,27 @@ router
       .catch((error) => next(error))
   })
   .post('/students/:id/evaluations', passport.authorize('jwt', { session: false }), (req, res, next) => {
+    const studentId = req.params.id
+    const update = req.body
+
     if (!req.account) {
-      const error = new Error('Unauthorized')
+      let error = new Error('Unauthorized')
       error.status = 401
       return next(error)
     }
-    const studentId = req.params.id
-    const newEvaluation = { ...req.body, date: req.body.date.slice(0, 10) }
+
+    if ((update.color === 2 || 3) && !update.remark) {
+      let error = new Error('Remark required!')
+      error.status = 400
+      return next(error)
+    }
+
+    const newEvaluation = { ...update, date: update.date.slice(0, 10) }
 
     Evaluation.create(newEvaluation)
       .then((evaluation) => {
         Student.findByIdAndUpdate(studentId, { $push: {evaluationIds: evaluation}, lastEvaluation: evaluation.color })
-          .then(res => res.json(res))
+          .then(res => console.log(res))
         res.status = 201
         res.json(evaluation)
       })
@@ -43,6 +52,13 @@ router
   .put('/evaluations/:id', (req, res, next) => {
     const evalId = req.params.id
     const update = req.body
+
+    if ((update.color === (2 || 3)) && update.remark.length < 1) {
+      console.log('WHY')
+      let error = new Error('Remark required!')
+      error.status = 400
+      return next(error)
+    }
 
     Evaluation.findByIdAndUpdate(evalId, update, { new: true })
       .then((evaluation) => {
