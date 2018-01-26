@@ -1,4 +1,3 @@
-// db/seed.js
 const request = require('superagent')
 const user = require('./fixtures/teacher.json')
 // const classes = require('./fixtures/classes.json')

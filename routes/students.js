@@ -2,19 +2,16 @@ const router = require('express').Router()
 const { Student } = require('../models')
 const { Class } = require('../models')
 const passport = require('../config/auth')
-// const mockstudents = require('../db/fixtures/students.json')
 
 const authenticate = passport.authorize('jwt', { session: false })
 
 const randomNumber = (min, max) => {
-  // maybe i don't need this
   min = Math.ceil(min)
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
 const getRandomGroup = () => {
-  // maybe rename const
   const gamble = randomNumber(1, 100)
   if (gamble < 48) { return 3 } else if (gamble > 78) { return 1 } return 2
 }
@@ -25,22 +22,14 @@ const filterStudents = (students) => {
 
 router
   .get('/classes/:batchNumber/students/random', authenticate, (req, res, next) => {
-    // Student.find()
     const batchNumber = req.params.batchNumber
     Class.findOne({ batchNumber: batchNumber })
       .then((classObject) => {
         Student.find({ '_id': { $in: classObject.studentIds } })
           .then(students => {
             if (students.length < 1) return console.error('No students in this class!')
-            // this still errors when students.length === 0
-            // const filteredStudents = mockstudents.filter(student => student.lastEvaluation === getRandomGroup())
             const filteredStudents = filterStudents(students)
             const noEmptyGroup = filteredStudents.length > 0 ? filteredStudents : students
-            // try to deal with empty groups
-            // while (filteredStudents.length < 1) {
-            //   this.filteredStudents = filterStudents(students)
-            //   return filteredStudents
-            // }
             const randomStudentIndex = randomNumber(0, (noEmptyGroup.length - 1))
             const randomStudent = noEmptyGroup[randomStudentIndex]
             res.json(randomStudent)
@@ -48,14 +37,6 @@ router
           .catch(err => console.error('dsdsjfkldskdfs', err))
       })
       .catch((error) => next(error))
-    // Student.where('lastEvaluation').equals(getRandomGroup())
-    //   .then((students) => {
-    //     // if there are no evaluated students (in each group) this probably errors
-    //     const randomStudentIndex = randomNumber(0, students.length)
-    //     const randomStudent = students[randomStudentIndex]
-    //     console.log('This is the random student: ', randomStudent)
-    //     res.json(randomStudent)
-    //   })
   })
   .get('/classes/:batchNumber/students/:id', authenticate, (req, res, next) => {
     const id = req.params.id
