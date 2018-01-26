@@ -36,7 +36,6 @@ router
             // const filteredStudents = mockstudents.filter(student => student.lastEvaluation === getRandomGroup())
             const filteredStudents = filterStudents(students)
             const noEmptyGroup = filteredStudents.length > 0 ? filteredStudents : students
-            console.log(noEmptyGroup)
             // try to deal with empty groups
             // while (filteredStudents.length < 1) {
             //   this.filteredStudents = filterStudents(students)
@@ -44,7 +43,6 @@ router
             // }
             const randomStudentIndex = randomNumber(0, (noEmptyGroup.length - 1))
             const randomStudent = noEmptyGroup[randomStudentIndex]
-            console.log('This is the random student: ', randomStudent)
             res.json(randomStudent)
           })
           .catch(err => console.error('dsdsjfkldskdfs', err))

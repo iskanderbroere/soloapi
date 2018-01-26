@@ -43,7 +43,7 @@ router
     Evaluation.create(newEvaluation)
       .then((evaluation) => {
         Student.findByIdAndUpdate(studentId, { $push: {evaluationIds: evaluation}, lastEvaluation: evaluation.color })
-          .then(res => console.log(res))
+          .then(student => console.log(student))
         res.status = 201
         res.json(evaluation)
       })
@@ -54,7 +54,6 @@ router
     const update = req.body
 
     if ((update.color === (2 || 3)) && update.remark.length < 1) {
-      console.log('WHY')
       let error = new Error('Remark required!')
       error.status = 400
       return next(error)
